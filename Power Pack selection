@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Power Pack Cylinder Calculator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .selection-area {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        @media (max-width: 768px) {
+            .selection-area {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .selection-box {
+            background: linear-gradient(145deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .selection-box h3 {
+            color: #34495e;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        select {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        select:hover {
+            border-color: #667eea;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: #764ba2;
+            box-shadow: 0 0 0 3px rgba(118, 75, 162, 0.1);
+        }
+
+        select:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background: #f5f5f5;
+        }
+
+        .info-display {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .info-item {
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: #7f8c8d;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+
+        .info-value {
+            color: #2c3e50;
+            font-size: 1.1em;
+            font-weight: 500;
+        }
+
+        .calculations-area {
+            margin-top: 40px;
+        }
+
+        .calculations-area h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+
+        .calculation-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            margin-bottom: 30px;
+        }
+
+        .calculation-table thead {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .calculation-table th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .calculation-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #ecf0f1;
+        }
+
+        .calculation-table tbody tr:hover {
+            background: #f8f9fa;
+        }
+
+        .calculation-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .no-selection {
+            text-align: center;
+            padding: 40px;
+            color: #95a5a6;
+            font-style: italic;
+        }
+
+        .unit {
+            color: #7f8c8d;
+            font-size: 0.9em;
+            margin-left: 5px;
+        }
+
+        .stage-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .stage-item {
+            padding: 8px;
+            background: linear-gradient(145deg, #e3f2fd, #bbdefb);
+            border-radius: 6px;
+            text-align: center;
+        }
+
+        .stage-label {
+            font-size: 0.85em;
+            color: #546e7a;
+            margin-bottom: 4px;
+        }
+
+        .stage-value {
+            font-weight: 600;
+            color: #1976d2;
+        }
+
+        .velocity-scroll {
+            overflow-x: auto;
+            margin-top: 30px;
+        }
+
+        .instructions {
+            background: #e8f4f8;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            border-left: 4px solid #2196F3;
+        }
+
+        .instructions h3 {
+            color: #1976d2;
+            margin-bottom: 10px;
+        }
+
+        .instructions p {
+            color: #455a64;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Power Pack & Cylinder Calculator</h1>
+        
+        <div class="instructions">
+            <h3>How to Use This Calculator</h3>
+            <p>
+                1. Select a Power Pack (Aggregat) from the first dropdown menu<br>
+                2. The system will automatically show compatible cylinders for your selected power pack<br>
+                3. Select a cylinder to view detailed calculations and performance data<br>
+                4. Review the calculated parameters including flow rates and linear velocities for each stage
+            </p>
+        </div>
+        
+        <div class="selection-area">
+            <div class="selection-box">
+                <h3>Step 1: Select Power Pack (Aggregat)</h3>
+                <select id="powerPackSelect">
+                    <option value="">-- Select a Power Pack --</option>
+                </select>
+                
+                <div id="powerPackInfo" class="info-display" style="display: none;">
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <div class="info-label">Article Number</div>
+                            <div class="info-value" id="articleNumber">-</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Configuration Code</div>
+                            <div class="info-value" id="configCode">-</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Pump Displacement</div>
+                            <div class="info-value" id="displacement">-</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Motor</div>
+                            <div class="info-value" id="motor">-</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="selection-box">
+                <h3>Step 2: Select Cylinder</h3>
+                <select id="cylinderSelect" disabled>
+                    <option value="">-- First select a Power Pack --</option>
+                </select>
+                
+                <div id="cylinderInfo" class="info-display" style="display: none;">
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <div class="info-label">Cylinder Type</div>
+                            <div class="info-value" id="cylinderType">-</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Cylinder Displacement</div>
+                            <div class="info-value" id="cylinderDisplacement">-</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Effective Displacement</div>
+                            <div class="info-value" id="effectiveDisplacement">-</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Stroke</div>
+                            <div class="info-value" id="stroke">-</div>
+                        </div>
+                    </div>
+                    
+                    <div class="stage-info" id="stageInfo" style="display: none;">
+                        <!-- Stage diameters will be added here dynamically -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="calculations-area" id="calculationsArea" style="display: none;">
+            <h2>Calculations & Performance Data</h2>
+            
+            <table class="calculation-table">
+                <thead>
+                    <tr>
+                        <th>Parameter</th>
+                        <th>Value</th>
+                        <th>Unit</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody id="calculationTableBody">
+                    <!-- Calculation rows will be added here -->
+                </tbody>
+            </table>
+            
+            <div class="velocity-scroll">
+                <h3 style="color: #2c3e50; margin-bottom: 15px;">Motor Performance & Linear Velocities by Stage</h3>
+                <table class="calculation-table">
+                    <thead>
+                        <tr>
+                            <th>Torque (Nm)</th>
+                            <th>Speed (rpm)</th>
+                            <th>Current (A)</th>
+                            <th>Flow Rate (L/min)</th>
+                            <th>Stage 1 (m/s)</th>
+                            <th>Stage 2 (m/s)</th>
+                            <th>Stage 3 (m/s)</th>
+                            <th>Stage 4 (m/s)</th>
+                            <th>Stage 5 (m/s)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="velocityTableBody">
+                        <!-- Velocity data will be added here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div id="noSelectionMessage" class="no-selection">
+            Please select a Power Pack and Cylinder to view calculations
+        </div>
+    </div>
+
+    <script>
+        // Complete Excel data structure embedded directly
+        const excelData = {
+            powerPacks: [
+                ["aktuelle Kundennummer", "FT-Artikelnummer", "aktueller Konfigurationscode", "Displacement", "Motor"],
+                ["CHV 12V5_C", "1449953", "FPC-N160B27H05NAO000BA180-B00", "2.1", "M-12VDC-1600W"],
+                ["CHV 12V8_C", "1449954", "FPC-N160B27H08NAO000BA180-B00", "0.8", "M-12VDC-1600W"],
+                ["CHV 12V11_C", "1449955", "FPC-N160B27H11NAO000BA180-B00", "1.1", "M-12VDC-1600W"],
+                ["CHV 12V14_C", "1449956", "FPC-N160B27H14NAO000BA180-B00", "1.4", "M-12VDC-1600W"],
+                ["CHV 12V18_C", "1449957", "FPC-N160B27H18NAO000BA180-B00", "1.8", "M-12VDC-1600W"],
+                ["CHV 24V5_C", "1449958", "FPC-G220B27H05NBO000BA180-B00", "0.5", "M-24VDC-2200W"],
+                ["CHV24V8_C", "1449959", "FPC-G220B27H08NBO000DA180-B00", "0.25", "M-24VDC-2200W"],
+                ["CHV 24V11_C", "1449960", "FPC-G220B27H11NBO000BA180-B00", "1.1", "M-24VDC-2200W"],
+                ["CHV 24V14_C", "1449961", "FPC-G220B27H14NBO000BA180-B00", "1.4", "M-24VDC-2200W"],
+                ["CHV 24V18_C", "1449962", "FPC-G220B27H18NBO000BA180-B00", "1.8", "M-24VDC-2200W"]
+            ],
+            cylinders: [
+                ["type of cylinder", "Cylinder displacement", "effective displacement", "D_T1", "D_T2", "D_T3", "D_T4", "D_T5", "stroke", "stroke per T", "Volume (L)"],
+                ["3305", "1.9", "2.5", "45", "61", "76", "_", "_", "570", "190", "2.5"],
+                ["3405", "3", "3.6", "45", "61", "76", "91", "_", "570", "190", "3.6"],
+                ["3395", "2.5", "3.1", "45", "61", "76", "_", "_", "570", "190", "3.1"],
+                ["3585", "4.5", "5.1", "45", "61", "76", "91", "107", "570", "190", "5.1"],
+                ["3306", "1.9", "2.5", "45", "61", "76", "_", "_", "760", "190", "2.5"],
+                ["3495", "2.5", "3.1", "45", "61", "76", "_", "_", "760", "190", "3.1"],
+                ["3397", "2.5", "3.1", "45", "61", "76", "_", "_", "950", "190", "3.1"],
+                ["3595", "4.5", "5.1", "45", "61", "76", "91", "107", "760", "190", "5.1"],
+                ["3445", "3", "3.6", "45", "61", "76", "91", "_", "855", "285", "3.6"],
+                ["3497", "3", "3.6", "45", "61", "76", "91", "_", "950", "190", "3.6"]
+            ],
+            matchlist: [
+                ["", "Power Pack Configuration", "Compatible Cylinders -->", "", "", "", "", "", "", "", "", "", "", ""],
+                ["1", "FPC-N160B27H05NAO000BA180-B00", "3305", "3405", "3395", "3585", "3306", "3495", "3397", "3445", "-", "-", "-", "-"],
+                ["2", "FPC-N160B27H08NAO000BA180-B00", "3305", "3405", "3395", "3585", "3306", "3495", "3397", "3595", "3445", "3497", "-", "-"],
+                ["3", "FPC-N160B27H11NAO000BA180-B00", "3305", "3405", "3395", "3585", "3306", "3495", "3397", "3595", "3445", "3497", "-", "-"],
+                ["4", "FPC-N160B27H14NAO000BA180-B00", "3305", "3405", "3395", "3585", "3306", "3495", "3397", "3595", "3445", "3497", "-", "-"],
+                ["5", "FPC-N160B27H18NAO000BA180-B00", "3305", "3405", "3395", "3585", "3306", "3495", "3397", "3595", "3445", "3497", "-", "-"],
+                ["6", "FPC-G220B27H05NBO000BA180-B00", "3305", "3405", "3395", "3585", "3306", "3495", "3397", "3445", "-", "-", "-", "-"],
+                ["7", "FPC-G220B27H08NBO000DA180-B00", "3305", "3405", "3395", "3585", "3306", "3495", "3397", "3595", "3445", "3497", "-", "-"],
+                ["8", "FPC-G220B27H11NBO000BA180-B00", "3305", "3405", "3395", "3585", "3306", "3495", "3397", "3595", "3445", "3497", "-", "-"],
+                ["9", "FPC-G220B27H14NBO000BA180-B00", "3305", "3405", "3395", "3585", "3306", "3495", "3397", "3595", "3445", "3497", "-", "-"],
+                ["10", "FPC-G220B27H18NBO000BA180-B00", "3305", "3405", "3395", "3585", "3306", "3495", "3397", "3595", "3445", "3497", "-", "-"]
+            ]
+        };
+
+        // Global variables
+        let selectedPowerPack = null;
+        let selectedCylinder = null;
+
+        // Initialize the application
+        function initializeApp() {
+            populatePowerPacks();
+            setupEventListeners();
+        }
+
+        // Populate Power Pack dropdown
+        function populatePowerPacks() {
+            const select = document.getElementById('powerPackSelect');
+            select.innerHTML = '<option value="">-- Select a Power Pack --</option>';
+            
+            // Skip header row (index 0)
+            for (let i = 1; i < excelData.powerPacks.length; i++) {
+                const powerPack = excelData.powerPacks[i];
+                const option = document.createElement('option');
+                option.value = i;
+                option.textContent = `${powerPack[0]} - Article: ${powerPack[1]}`;
+                select.appendChild(option);
+            }
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            document.getElementById('powerPackSelect').addEventListener('change', handlePowerPackSelection);
+            document.getElementById('cylinderSelect').addEventListener('change', handleCylinderSelection);
+        }
+
+        // Handle Power Pack selection
+        function handlePowerPackSelection(e) {
+            const index = e.target.value;
+            
+            if (index === '') {
+                resetSelections();
+                return;
+            }
+            
+            selectedPowerPack = excelData.powerPacks[index];
+            displayPowerPackInfo();
+            populateCompatibleCylinders(selectedPowerPack[2]);
+        }
+
+        // Display Power Pack information
+        function displayPowerPackInfo() {
+            document.getElementById('articleNumber').textContent = selectedPowerPack[1];
+            document.getElementById('configCode').textContent = selectedPowerPack[2];
+            document.getElementById('displacement').innerHTML = selectedPowerPack[3] + '<span class="unit">ccm/rev</span>';
+            document.getElementById('motor').textContent = selectedPowerPack[4];
+            document.getElementById('powerPackInfo').style.display = 'block';
+        }
+
+        // Populate compatible cylinders based on configuration code
+        function populateCompatibleCylinders(configCode) {
+            const select = document.getElementById('cylinderSelect');
+            select.innerHTML = '<option value="">-- Select a Cylinder --</option>';
+            select.disabled = false;
+            
+            // Find matching cylinders from matchlist
+            let matchingCylinders = [];
+            for (let i = 1; i < excelData.matchlist.length; i++) {
+                if (excelData.matchlist[i][1] === configCode) {
+                    // Get cylinder IDs from this row (columns 2 onwards)
+                    for (let j = 2; j < excelData.matchlist[i].length; j++) {
+                        const cylinderId = excelData.matchlist[i][j];
+                        if (cylinderId && cylinderId !== '-' && cylinderId !== '') {
+                            matchingCylinders.push(cylinderId);
+                        }
+                    }
+                    break;
+                }
+            }
+            
+            // Add matching cylinders to dropdown
+            matchingCylinders.forEach(cylinderId => {
+                // Find cylinder details
+                for (let i = 1; i < excelData.cylinders.length; i++) {
+                    if (excelData.cylinders[i][0] === cylinderId) {
+                        const option = document.createElement('option');
+                        option.value = i;
+                        option.textContent = `Type ${cylinderId} - ${excelData.cylinders[i][1]} L displacement`;
+                        select.appendChild(option);
+                        break;
+                    }
+                }
+            });
+            
+            if (matchingCylinders.length === 0) {
+                select.innerHTML = '<option value="">No compatible cylinders found</option>';
+                select.disabled = true;
+            }
+        }
+
+        // Handle Cylinder selection
+        function handleCylinderSelection(e) {
+            const index = e.target.value;
+            
+            if (index === '') {
+                selectedCylinder = null;
+                document.getElementById('cylinderInfo').style.display = 'none';
+                document.getElementById('calculationsArea').style.display = 'none';
+                document.getElementById('noSelectionMessage').style.display = 'block';
+                return;
+            }
+            
+            selectedCylinder = excelData.cylinders[index];
+            displayCylinderInfo();
+            displayStageInfo();
+            showCalculations();
+        }
+
+        // Display Cylinder information
+        function displayCylinderInfo() {
+            document.getElementById('cylinderType').textContent = selectedCylinder[0];
+            document.getElementById('cylinderDisplacement').innerHTML = selectedCylinder[1] + '<span class="unit">L</span>';
+            document.getElementById('effectiveDisplacement').innerHTML = selectedCylinder[2] + '<span class="unit">L</span>';
+            document.getElementById('stroke').innerHTML = selectedCylinder[8] + '<span class="unit">mm</span>';
+            document.getElementById('cylinderInfo').style.display = 'block';
+        }
+
+        // Display stage diameter information
+        function displayStageInfo() {
+            const stageInfo = document.getElementById('stageInfo');
+            stageInfo.innerHTML = '';
+            
+            const stageLabels = ['D_T1', 'D_T2', 'D_T3', 'D_T4', 'D_T5'];
+            let hasStages = false;
+            
+            for (let i = 0; i < 5; i++) {
+                const value = selectedCylinder[3 + i];
+                if (value && value !== '_' && value !== '') {
+                    hasStages = true;
+                    const stageDiv = document.createElement('div');
+                    stageDiv.className = 'stage-item';
+                    stageDiv.innerHTML = `
+                        <div class="stage-label">${stageLabels[i]}</div>
+                        <div class="stage-value">${value} mm</div>
+                    `;
+                    stageInfo.appendChild(stageDiv);
+                }
+            }
+            
+            stageInfo.style.display = hasStages ? 'grid' : 'none';
+        }
+
+        // Show calculations based on selections
+        function showCalculations() {
+            document.getElementById('noSelectionMessage').style.display = 'none';
+            document.getElementById('calculationsArea').style.display = 'block';
+            
+            const tableBody = document.getElementById('calculationTableBody');
+            tableBody.innerHTML = '';
+            
+            // Extract values for calculations
+            const pumpDisplacement = parseFloat(selectedPowerPack[3]);
+            const cylinderDisplacement = parseFloat(selectedCylinder[1]);
+            const effectiveDisplacement = parseFloat(selectedCylinder[2]);
+            const stroke = parseFloat(selectedCylinder[8]);
+            const strokePerT = selectedCylinder[9];
+            const volume = selectedCylinder[10];
+            
+            // Calculate additional parameters
+            const cutOffPressure = 180; // bar (from Excel)
+            const maxFlowRate = calculateMaxFlowRate(pumpDisplacement);
+            
+            // Add calculation rows
+            const calculations = [
+                ['Pump Displacement', pumpDisplacement.toFixed(2), 'ccm/rev', 'Pump volume per revolution'],
+                ['Cylinder Displacement', cylinderDisplacement.toFixed(2), 'L', 'Nominal cylinder volume'],
+                ['Effective Displacement', effectiveDisplacement.toFixed(2), 'L', 'Working cylinder volume'],
+                ['Total Stroke Length', stroke.toFixed(0), 'mm', 'Full extension length'],
+                ['Stroke per Stage', strokePerT, 'mm', 'Extension per telescopic stage'],
+                ['Volume Capacity', volume, 'L', 'Total hydraulic fluid capacity'],
+                ['Cut-off Pressure', cutOffPressure, 'bar', 'Relief valve pressure setting'],
+                ['Power Pack Motor', selectedPowerPack[4], '-', 'Motor specification'],
+                ['Max Flow Rate', maxFlowRate.toFixed(2), 'L/min', 'Maximum pump flow rate']
+            ];
+            
+            calculations.forEach(calc => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${calc[0]}</td>
+                    <td><strong>${calc[1]}</strong></td>
+                    <td>${calc[2]}</td>
+                    <td style="color: #7f8c8d; font-style: italic;">${calc[3]}</td>
+                `;
+                tableBody.appendChild(row);
+            });
+            
+            // Display velocity table
+            displayVelocityTable();
+        }
+
+        // Calculate maximum flow rate
+        function calculateMaxFlowRate(pumpDisplacement) {
+            // Assuming max motor speed of 4500 rpm for 24V motor, 3000 rpm for 12V
+            const maxSpeed = selectedPowerPack[4].includes('24V') ? 4500 : 3000;
+            return (pumpDisplacement * maxSpeed) / 1000; // Convert to L/min
+        }
+
+        // Display velocity calculations table
+        function displayVelocityTable() {
+            const tableBody = document.getElementById('velocityTableBody');
+            tableBody.innerHTML = '';
+            
+            const pumpDisplacement = parseFloat(selectedPowerPack[3]);
+            const is24V = selectedPowerPack[4].includes('24V');
+            
+            // Get stage diameters
+            const stageDiameters = [];
+            for (let i = 0; i < 5; i++) {
+                const diameter = selectedCylinder[3 + i];
+                if (diameter && diameter !== '_' && diameter !== '') {
+                    stageDiameters.push(parseFloat(diameter));
+                }
+            }
+            
+            // Generate velocity data based on motor type
+            const velocityData = generateVelocityData(pumpDisplacement, stageDiameters, is24V);
+            
+            velocityData.forEach((row, index) => {
+                const tr = document.createElement('tr');
+                let rowHTML = `
+                    <td>${row.torque}</td>
+                    <td>${row.speed}</td>
+                    <td>${row.current}</td>
+                    <td>${row.flowRate.toFixed(3)}</td>
+                `;
+                
+                // Add velocity values for each stage
+                for (let i = 0; i < 5; i++) {
+                    if (i < row.velocities.length) {
+                        rowHTML += `<td>${row.velocities[i].toFixed(6)}</td>`;
+                    } else {
+                        rowHTML += `<td>-</td>`;
+                    }
+                }
+                
+                tr.innerHTML = rowHTML;
+                tableBody.appendChild(tr);
+            });
+        }
+
+        // Generate velocity data based on motor characteristics
+        function generateVelocityData(pumpDisplacement, stageDiameters, is24V) {
+            const data = [];
+            
+            // Motor characteristics (simplified model)
+            const maxSpeed = is24V ? 4500 : 3000;
+            const maxCurrent = is24V ? 120 : 140;
+            const torqueSteps = 8;
+            
+            for (let i = 0; i <= torqueSteps; i++) {
+                const torque = i;
+                const speedRatio = 1 - (i / torqueSteps) * 0.4; // Speed decreases with torque
+                const speed = Math.round(maxSpeed * speedRatio);
+                const current = Math.round((i / torqueSteps) * maxCurrent);
+                const flowRate = (pumpDisplacement * speed) / 1000; // L/min
+                
+                // Calculate linear velocities for each stage
+                const velocities = stageDiameters.map(diameter => {
+                    const area = Math.PI * Math.pow(diameter / 2000, 2); // Convert mm to m
+                    const velocity = (flowRate / 60000) / area; // m/s
+                    return velocity;
+                });
+                
+                data.push({
+                    torque,
+                    speed,
+                    current,
+                    flowRate,
+                    velocities
+                });
+            }
+            
+            return data;
+        }
+
+        // Reset all selections
+        function resetSelections() {
+            selectedPowerPack = null;
+            selectedCylinder = null;
+            document.getElementById('powerPackInfo').style.display = 'none';
+            document.getElementById('cylinderSelect').disabled = true;
+            document.getElementById('cylinderSelect').innerHTML = '<option value="">-- First select a Power Pack --</option>';
+            document.getElementById('cylinderInfo').style.display = 'none';
+            document.getElementById('calculationsArea').style.display = 'none';
+            document.getElementById('noSelectionMessage').style.display = 'block';
+        }
+
+        // Initialize the application when the page loads
+        document.addEventListener('DOMContentLoaded', initializeApp);
